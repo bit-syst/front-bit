@@ -15,9 +15,10 @@ const ClientList = () => {
   const [marketingEmps, setMarketingEmps] = useState([]);
   const [opsEmps, setOpsEmps] = useState([]);
   const [form, setForm] = useState({
-    email: '', password: '', client_name: '', company: '', plan: 'website', subplan: '',
+    email: '', password: '', client_name: '', company: '', mobile: '', city: '', plan: 'website', subplan: '',
     payment_date: new Date().toISOString().split('T')[0],
-    marketing_person_id: '', operations_person_id: '', important_info: ''
+    marketing_person_id: '', operations_person_id: '', important_info: '',
+    requirement_snapshot: null
   });
   const navigate = useNavigate();
 
@@ -87,19 +88,21 @@ const ClientList = () => {
     };
 
 
-    const resetForm = () => {
-      setForm({ email: '', password: '', client_name: '', company: '', plan: 'website', subplan: '', payment_date: new Date().toISOString().split('T')[0], marketing_person_id: '', operations_person_id: '', important_info: '' });
-      setEditId(null);
-    };
+      const resetForm = () => {
+        setForm({ email: '', password: '', client_name: '', company: '', mobile: '', city: '', plan: 'website', subplan: '', payment_date: new Date().toISOString().split('T')[0], marketing_person_id: '', operations_person_id: '', important_info: '', requirement_snapshot: null });
+        setEditId(null);
+      };
 
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      if (name === 'plan') {
-        setForm({ ...form, plan: value, subplan: value === 'marketing' ? 'ultimate' : '', important_info: '' });
-      } else {
-        setForm({ ...form, [name]: value });
-      }
-    };
+      const handleChange = (e) => {
+        const { name, value, files } = e.target;
+        if (name === 'requirement_snapshot') {
+          setForm({ ...form, requirement_snapshot: files[0] || null });
+        } else if (name === 'plan') {
+          setForm({ ...form, plan: value, subplan: value === 'marketing' ? 'ultimate' : '', important_info: '' });
+        } else {
+          setForm({ ...form, [name]: value });
+        }
+      };
 
 
   const handleSubmitForm = async (e) => {
@@ -131,16 +134,18 @@ const ClientList = () => {
     }
   };
 
-    const handleEdit = (client) => {
-      setForm({
-        email: '', password: '', client_name: client.client_name || '', company: client.company, plan: client.plan, subplan: client.subplan || '',
-        payment_date: client.payment_date ? new Date(client.payment_date).toISOString().split('T')[0] : '',
-        marketing_person_id: client.marketing_person_id || '', operations_person_id: client.operations_person_id || '',
-        important_info: client.important_info || ''
-      });
-      setEditId(client.id);
-      setShowForm(true);
-    };
+      const handleEdit = (client) => {
+        setForm({
+          email: '', password: '', client_name: client.client_name || '', company: client.company,
+          mobile: client.mobile || '', city: client.city || '',
+          plan: client.plan, subplan: client.subplan || '',
+          payment_date: client.payment_date ? new Date(client.payment_date).toISOString().split('T')[0] : '',
+          marketing_person_id: client.marketing_person_id || '', operations_person_id: client.operations_person_id || '',
+          important_info: client.important_info || '', requirement_snapshot: null
+        });
+        setEditId(client.id);
+        setShowForm(true);
+      };
 
   return (
     <div>
@@ -244,14 +249,22 @@ const ClientList = () => {
                       </div>
                     </>
                   )}
-                    <div className="form-group">
-                      <label>Client Name *</label>
-                      <input type="text" className="form-control" name="client_name" value={form.client_name} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
-                      <label>Company *</label>
-                      <input type="text" className="form-control" name="company" value={form.company} onChange={handleChange} required />
-                    </div>
+                      <div className="form-group">
+                        <label>Client Name *</label>
+                        <input type="text" className="form-control" name="client_name" value={form.client_name} onChange={handleChange} required />
+                      </div>
+                      <div className="form-group">
+                        <label>Company *</label>
+                        <input type="text" className="form-control" name="company" value={form.company} onChange={handleChange} required />
+                      </div>
+                      <div className="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" className="form-control" name="mobile" value={form.mobile} onChange={handleChange} placeholder="10-digit mobile number" />
+                      </div>
+                      <div className="form-group">
+                        <label>City / Location</label>
+                        <input type="text" className="form-control" name="city" value={form.city} onChange={handleChange} placeholder="City or Location" />
+                      </div>
                     <div className="form-group">
                       <label>Plan</label>
                       <select className="form-control" name="plan" value={form.plan} onChange={handleChange}>
@@ -286,10 +299,15 @@ const ClientList = () => {
                         {opsEmps.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                       </select>
                     </div>
-                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                      <label>Important Information</label>
-                      <textarea className="form-control" name="important_info" value={form.important_info} onChange={handleChange} rows="2" />
-                    </div>
+                      <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                        <label>Requirement Snapshot (Image / PDF / Doc)</label>
+                        <input type="file" className="form-control" name="requirement_snapshot" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.webp" onChange={handleChange} style={{ padding: '6px 10px' }} />
+                        {editId && <div style={{ fontSize: 11, color: '#999', marginTop: 4 }}>Leave blank to keep existing snapshot.</div>}
+                      </div>
+                      <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                        <label>Important Information</label>
+                        <textarea className="form-control" name="important_info" value={form.important_info} onChange={handleChange} rows="2" />
+                      </div>
                   </div>
                 <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 20 }}>
                   <button type="button" className="btn btn-outline" onClick={() => setShowForm(false)}>Cancel</button>

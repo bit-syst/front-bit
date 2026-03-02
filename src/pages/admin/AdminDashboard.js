@@ -51,17 +51,17 @@ const AdminDashboard = () => {
     ];
 
     const financialCards = [
-      { label: 'Total Amount (100%)', value: stats?.financialSummary?.totalRevenue, color: '#1a237e', bg: '#e8eaf6' },
+      { label: 'Total Income (100%)', value: stats?.financialSummary?.totalRevenue, color: '#1a237e', bg: '#e8eaf6' },
       { label: 'Hosting Charges (50%)', value: stats?.financialSummary?.hostingCost, color: '#fbc02d', bg: '#fffde7' },
+      { label: 'Gross Margin', value: stats?.financialSummary?.grossMargin, color: '#388e3c', bg: '#e8f5e9' },
       { label: 'Payments (16%)', value: stats?.financialSummary?.payments, color: '#0288d1', bg: '#e1f5fe' },
       { label: 'Incentive (8%)', value: stats?.financialSummary?.incentive, color: '#7b1fa2', bg: '#f3e5f5' },
       { label: 'Office Expenses (4%)', value: stats?.financialSummary?.officeExpenses, color: '#c2185b', bg: '#fce4ec' },
       { label: 'Extraordinary (4%)', value: stats?.financialSummary?.extraordinary, color: '#e64a19', bg: '#fbe9e7' },
-      { label: 'Gross Margin', value: stats?.financialSummary?.grossMargin, color: '#388e3c', bg: '#e8f5e9' },
       { label: 'Net Profit (18%)', value: stats?.financialSummary?.netProfit, color: '#2e7d32', bg: '#c8e6c9' },
-      { label: 'Sumit (50% of NP)', value: stats?.financialSummary?.dividendSumit, color: '#1565c0', bg: '#e3f2fd' },
-      { label: 'Abhay (40% of NP)', value: stats?.financialSummary?.dividendAbhay, color: '#00838f', bg: '#e0f7fa' },
-      { label: 'TTD (10% of NP)', value: stats?.financialSummary?.dividendTTD, color: '#263238', bg: '#eceff1' },
+      // { label: 'Sumit (50% of NP)', value: stats?.financialSummary?.dividendSumit, color: '#1565c0', bg: '#e3f2fd' },
+      // { label: 'Abhay (40% of NP)', value: stats?.financialSummary?.dividendAbhay, color: '#00838f', bg: '#e0f7fa' },
+      // { label: 'TTD (10% of NP)', value: stats?.financialSummary?.dividendTTD, color: '#263238', bg: '#eceff1' },
     ];
 
     return (
@@ -179,14 +179,17 @@ const AdminDashboard = () => {
           </div>
           
           <div style={{ marginTop: 24, padding: 16, background: '#fcfcfc', borderRadius: 10, border: '1px dashed #ddd' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#1a237e', marginBottom: 8 }}>Business Calculations:</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1a237e', marginBottom: 8 }}>Income & Expense Breakdown:</div>
             <ul style={{ fontSize: 11, color: '#666', listStyleType: 'disc', paddingLeft: 20, lineHeight: 1.6 }}>
-                <li><b>Total Revenue:</b> Total amount paid by clients (including 18% GST).</li>
-                <li><b>Base Amount:</b> Revenue excluding tax (Total / 1.18).</li>
-                <li><b>Hosting Charges (50%):</b> Calculated as 50% of Base Amount.</li>
-                <li><b>Incentive (8%):</b> Paid to employees on sales after crossing ₹1,00,000 threshold.</li>
-                <li><b>Net Profit (18%):</b> Final profit after all internal expenses (18% of Base).</li>
-                <li><b>Dividend Distribution:</b> Divided from Net Profit as Sumit (50%), Abhay (40%), and TTD (10%).</li>
+                <li><b>Total Income (100%)</b></li>
+                {/* <li><b>Base Amount:</b> Revenue excluding tax (Total / 1.18).</li> */}
+                <li><b>Hosting Cost (50%)</b> </li>
+                <li><b>Payment Charges (16%)</b> </li>
+                <li><b>Employee Incentives (8%):</b> Applicable only when an employee achieves ₹1,00,000 cross-sell per month</li>
+                <li><b>Official Expenses (4%):</b> Final profit after all internal expenses (18% of Base).</li>
+                <li><b>Extraordinary Expenses (4%)</b></li>
+                <li><b>Gross Margin(50%)</b></li>
+                <li><b>Net Profit(18%):</b> Net profit will be distributed among partners as per the agreed policy</li>
             </ul>
           </div>
         </div>

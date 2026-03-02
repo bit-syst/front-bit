@@ -10,7 +10,7 @@ const EmployeeManagement = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [editId, setEditId] = useState(null);
   const [form, setForm] = useState({
-    name: '', aadhar: '', department: 'Marketing', incentive_applicable: true,
+    name: '', aadhar: '', mobile: '', date_of_joining: '', department: 'Marketing', incentive_applicable: true,
     email: '', password: '', confirmPassword: '', salary: ''
   });
 
@@ -29,10 +29,10 @@ const EmployeeManagement = () => {
     fetchEmployees();
   }, [fetchEmployees]);
 
-  const resetForm = () => {
-      setForm({ name: '', aadhar: '', department: 'Marketing', incentive_applicable: true, email: '', password: '', confirmPassword: '', salary: '' });
-      setEditId(null);
-    };
+    const resetForm = () => {
+        setForm({ name: '', aadhar: '', mobile: '', date_of_joining: '', department: 'Marketing', incentive_applicable: true, email: '', password: '', confirmPassword: '', salary: '' });
+        setEditId(null);
+      };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -66,15 +66,16 @@ const EmployeeManagement = () => {
     }
   };
 
-  const handleEdit = (emp) => {
-    setForm({
-      name: emp.name, aadhar: emp.aadhar || '', department: emp.department,
-      incentive_applicable: emp.incentive_applicable === 1, email: emp.email,
-      password: '', confirmPassword: '', salary: emp.salary || ''
-    });
-    setEditId(emp.id);
-    setShowForm(true);
-  };
+    const handleEdit = (emp) => {
+      setForm({
+        name: emp.name, aadhar: emp.aadhar || '', mobile: emp.mobile || '', date_of_joining: emp.date_of_joining ? new Date(emp.date_of_joining).toISOString().split('T')[0] : '',
+        department: emp.department,
+        incentive_applicable: emp.incentive_applicable === 1, email: emp.email,
+        password: '', confirmPassword: '', salary: emp.salary || ''
+      });
+      setEditId(emp.id);
+      setShowForm(true);
+    };
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({ title: 'Delete Employee?', text: 'This action cannot be undone.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#f44336', confirmButtonText: 'Yes, delete' });
@@ -157,22 +158,30 @@ const EmployeeManagement = () => {
             </div>
             <div className="modal-body">
               <form onSubmit={handleSubmit}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div className="form-group">
-                    <label>Name *</label>
-                    <input type="text" name="name" className="form-control" value={form.name} onChange={handleChange} required />
-                  </div>
-                  <div className="form-group">
-                    <label>Aadhar</label>
-                    <input type="text" name="aadhar" className="form-control" value={form.aadhar} onChange={handleChange} placeholder="Aadhar number" />
-                  </div>
-                  <div className="form-group">
-                    <label>Department *</label>
-                    <select name="department" className="form-control" value={form.department} onChange={handleChange}>
-                      <option value="Marketing">Marketing</option>
-                      <option value="Operations">Operations</option>
-                    </select>
-                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    <div className="form-group">
+                      <label>Name *</label>
+                      <input type="text" name="name" className="form-control" value={form.name} onChange={handleChange} required />
+                    </div>
+                    <div className="form-group">
+                      <label>Aadhar</label>
+                      <input type="text" name="aadhar" className="form-control" value={form.aadhar} onChange={handleChange} placeholder="Aadhar number" />
+                    </div>
+                    <div className="form-group">
+                      <label>Mobile Number</label>
+                      <input type="tel" name="mobile" className="form-control" value={form.mobile} onChange={handleChange} placeholder="10-digit mobile number" />
+                    </div>
+                    <div className="form-group">
+                      <label>Date of Joining</label>
+                      <input type="date" name="date_of_joining" className="form-control" value={form.date_of_joining} onChange={handleChange} />
+                    </div>
+                    <div className="form-group">
+                      <label>Department *</label>
+                      <select name="department" className="form-control" value={form.department} onChange={handleChange}>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Operations">Operations</option>
+                      </select>
+                    </div>
                   <div className="form-group">
                     <label>Salary</label>
                     <input type="number" name="salary" className="form-control" value={form.salary} onChange={handleChange} placeholder="Monthly salary" />

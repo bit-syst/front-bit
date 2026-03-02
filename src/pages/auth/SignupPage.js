@@ -8,9 +8,10 @@ import { FiUserPlus, FiChevronRight, FiChevronLeft, FiCheck, FiEye, FiEyeOff } f
 const SignupPage = () => {
     const [step, setStep] = useState(1);
     const [form, setForm] = useState({
-      email: '', password: '', client_name: '', company: '', plan: 'website', subplan: '',
+      email: '', password: '', client_name: '', company: '', mobile: '', city: '', plan: 'website', subplan: '',
       payment_date: new Date().toISOString().split('T')[0],
-      marketing_person_id: '', operations_person_id: '', important_info: ''
+      marketing_person_id: '', operations_person_id: '', important_info: '',
+      requirement_snapshot: null
     });
     const [marketingEmployees, setMarketingEmployees] = useState([]);
     const [opsEmployees, setOpsEmployees] = useState([]);
@@ -44,14 +45,16 @@ const SignupPage = () => {
       fetchEmployees();
     }, []);
 
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      if (name === 'plan') {
-        setForm({ ...form, plan: value, subplan: value === 'marketing' ? 'ultimate' : '', important_info: '' });
-      } else {
-        setForm({ ...form, [name]: value });
-      }
-    };
+      const handleChange = (e) => {
+        const { name, value, files } = e.target;
+        if (name === 'requirement_snapshot') {
+          setForm({ ...form, requirement_snapshot: files[0] || null });
+        } else if (name === 'plan') {
+          setForm({ ...form, plan: value, subplan: value === 'marketing' ? 'ultimate' : '', important_info: '' });
+        } else {
+          setForm({ ...form, [name]: value });
+        }
+      };
 
 
     const getAmount = () => {
@@ -90,20 +93,28 @@ const SignupPage = () => {
 
   const prevStep = () => setStep(s => s - 1);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (step < 3) return nextStep();
-    
-    setLoading(true);
-    try {
-      await signup(form);
-      Swal.fire({ icon: 'success', title: 'Registration Successful!', text: 'Please login with your credentials', timer: 2000, showConfirmButton: false });
-      navigate('/login');
-    } catch (err) {
-      Swal.fire('Error', err.response?.data?.message || 'Registration failed', 'error');
-    }
-    setLoading(false);
-  };
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (step < 3) return nextStep();
+      
+      setLoading(true);
+      try {
+        const fd = new FormData();
+        Object.entries(form).forEach(([k, v]) => {
+          if (k === 'requirement_snapshot') {
+            if (v) fd.append('requirement_snapshot', v);
+          } else if (v !== undefined && v !== null) {
+            fd.append(k, v);
+          }
+        });
+        await signup(fd);
+        Swal.fire({ icon: 'success', title: 'Registration Successful!', text: 'Please login with your credentials', timer: 2000, showConfirmButton: false });
+        navigate('/login');
+      } catch (err) {
+        Swal.fire('Error', err.response?.data?.message || 'Registration failed', 'error');
+      }
+      setLoading(false);
+    };
 
   return (
     <div style={{
@@ -135,32 +146,40 @@ const SignupPage = () => {
 
         <form onSubmit={handleSubmit}>
           {step === 1 && (
-            <div className="animate-fadeIn">
-              <div className="form-group">
-                <label>Email Address *</label>
-                <input type="email" name="email" className="form-control" value={form.email} onChange={handleChange} placeholder="john@example.com" required />
-              </div>
-              <div className="form-group">
-                <label>Password *</label>
-                <div style={{ position: 'relative' }}>
-                  <input type={showPassword ? 'text' : 'password'} name="password" className="form-control" value={form.password} onChange={handleChange} placeholder="••••••••" required style={{ paddingRight: 40 }} />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: '#999' }}>
-                    {showPassword ? <FiEyeOff /> : <FiEye />}
-                  </button>
+              <div className="animate-fadeIn">
+                <div className="form-group">
+                  <label>Email Address *</label>
+                  <input type="email" name="email" className="form-control" value={form.email} onChange={handleChange} placeholder="john@example.com" required />
+                </div>
+                <div className="form-group">
+                  <label>Password *</label>
+                  <div style={{ position: 'relative' }}>
+                    <input type={showPassword ? 'text' : 'password'} name="password" className="form-control" value={form.password} onChange={handleChange} placeholder="••••••••" required style={{ paddingRight: 40 }} />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: '#999' }}>
+                      {showPassword ? <FiEyeOff /> : <FiEye />}
+                    </button>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Client / Representative Name *</label>
+                  <input type="text" name="client_name" className="form-control" value={form.client_name} onChange={handleChange} placeholder="Full Name" required />
+                </div>
+                <div className="form-group">
+                  <label>Mobile Number</label>
+                  <input type="tel" name="mobile" className="form-control" value={form.mobile} onChange={handleChange} placeholder="10-digit mobile number" />
                 </div>
               </div>
-              <div className="form-group">
-                <label>Client / Representative Name *</label>
-                <input type="text" name="client_name" className="form-control" value={form.client_name} onChange={handleChange} placeholder="Full Name" required />
-              </div>
-            </div>
-          )}
+            )}
 
           {step === 2 && (
             <div className="animate-fadeIn">
               <div className="form-group">
                 <label>Company / Organization *</label>
                 <input type="text" name="company" className="form-control" value={form.company} onChange={handleChange} placeholder="Company Name" required />
+              </div>
+              <div className="form-group">
+                <label>City / Location</label>
+                <input type="text" name="city" className="form-control" value={form.city} onChange={handleChange} placeholder="e.g. Mumbai, Delhi" />
               </div>
               <div className="form-group">
                 <label>Select Plan</label>
@@ -184,6 +203,11 @@ const SignupPage = () => {
                   <textarea name="important_info" className="form-control" value={form.important_info} onChange={handleChange} placeholder="Requirements..." rows="2" />
                 </div>
               )}
+              <div className="form-group">
+                <label>Requirement Snapshot (Optional)</label>
+                <input type="file" name="requirement_snapshot" className="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.webp" onChange={handleChange} style={{ padding: '6px 10px' }} />
+                <div style={{ fontSize: 11, color: '#999', marginTop: 4 }}>Upload image, PDF or Word doc (max 10MB)</div>
+              </div>
             </div>
           )}
 
