@@ -33,8 +33,8 @@ const EmployeeDashboard = () => {
   const salaryWidth = (salary / maxProgress) * 100;
   const incentiveWidth = incentiveEligible ? ((totalIncentive / maxProgress) * 100) : 0;
 
-  // Revenue progress toward 100000 threshold
-  const revenueProgress = Math.min((totalRevenue / 100000) * 100, 100);
+  // Revenue progress toward 200000 threshold
+  const revenueProgress = Math.min((totalRevenue / 200000) * 100, 100);
 
   return (
     <div>
@@ -58,7 +58,7 @@ const EmployeeDashboard = () => {
               <div className="stat-icon"><FiAward /></div>
               <div className="stat-value">Rs. {fmt(incentiveEligible ? totalIncentive : 0)}</div>
               <div className="stat-label">Total Incentive Earned</div>
-              <div className="stat-sub">{incentiveEligible ? '8% of project amount' : 'Unlock after Rs. 1,00,000 revenue'}</div>
+              <div className="stat-sub">{incentiveEligible ? 'Upto 15% incentive per product' : 'Unlock after Rs. 2,00,000 revenue'}</div>
             </div>
             <div className="stat-card animate-fadeIn" style={{ background: 'linear-gradient(135deg, #4caf50, #66bb6a)', animationDelay: '0.2s' }}>
               <div className="stat-icon"><FiTrendingUp /></div>
@@ -118,7 +118,7 @@ const EmployeeDashboard = () => {
           <div style={{ marginTop: 24 }}>
             <div className="progress-label">
               <span>Revenue Progress to Unlock Incentive</span>
-              <span>Rs. {fmt(totalRevenue)} / Rs. 1,00,000</span>
+              <span>Rs. {fmt(totalRevenue)} / Rs. 2,00,000</span>
             </div>
             <div className="progress-bar" style={{ height: 16 }}>
               <div className="progress-fill" style={{
@@ -127,7 +127,7 @@ const EmployeeDashboard = () => {
               }} />
             </div>
             <div style={{ fontSize: 11, color: '#999', marginTop: 4 }}>
-              After generating Rs. 1,00,000 revenue, you will earn 8% incentive on each order
+              Incentive will be upto 15% beyond 2,00,000 Rs sales
             </div>
           </div>
         )}
@@ -145,7 +145,7 @@ const EmployeeDashboard = () => {
                   <th>Company</th>
                   <th>Plan</th>
                   <th>Amount</th>
-                  <th>Incentive (8%)</th>
+                  <th>Incentive (Upto 15%)</th>
                   <th>Date</th>
                 </tr>
               </thead>

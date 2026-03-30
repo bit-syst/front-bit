@@ -50,18 +50,38 @@ const AdminDashboard = () => {
       { label: 'Total Revenue', value: `Rs. ${fmt(stats?.totalRevenue?.total)}`, icon: <FiDollarSign />, gradient: 'linear-gradient(135deg, #4caf50, #66bb6a)', sub: `Monthly: Rs. ${fmt(stats?.totalRevenue?.monthly)} | Yearly: Rs. ${fmt(stats?.totalRevenue?.yearly)}` },
     ];
 
-    const financialCards = [
-      { label: 'Total Income (100%)', value: stats?.financialSummary?.totalRevenue, color: '#1a237e', bg: '#e8eaf6' },
-      { label: 'Hosting Charges (50%)', value: stats?.financialSummary?.hostingCost, color: '#fbc02d', bg: '#fffde7' },
-      { label: 'Gross Margin', value: stats?.financialSummary?.grossMargin, color: '#388e3c', bg: '#e8f5e9' },
-      { label: 'Payments (16%)', value: stats?.financialSummary?.payments, color: '#0288d1', bg: '#e1f5fe' },
-      { label: 'Incentive (8%)', value: stats?.financialSummary?.incentive, color: '#7b1fa2', bg: '#f3e5f5' },
-      { label: 'Office Expenses (4%)', value: stats?.financialSummary?.officeExpenses, color: '#c2185b', bg: '#fce4ec' },
-      { label: 'Extraordinary (4%)', value: stats?.financialSummary?.extraordinary, color: '#e64a19', bg: '#fbe9e7' },
-      { label: 'Net Profit (18%)', value: stats?.financialSummary?.netProfit, color: '#2e7d32', bg: '#c8e6c9' },
-      // { label: 'Sumit (50% of NP)', value: stats?.financialSummary?.dividendSumit, color: '#1565c0', bg: '#e3f2fd' },
-      // { label: 'Abhay (40% of NP)', value: stats?.financialSummary?.dividendAbhay, color: '#00838f', bg: '#e0f7fa' },
-      // { label: 'TTD (10% of NP)', value: stats?.financialSummary?.dividendTTD, color: '#263238', bg: '#eceff1' },
+    // New financial card calculations (based on totalRevenue from DB)
+    const _totalRevenue = parseFloat(stats?.financialSummary?.totalRevenue || 0);
+    const _finalRevenue = _totalRevenue * 0.85;
+    const _profit = _finalRevenue * 0.50;
+    const _profitMargin = 50; // fixed percentage display
+    const _affiliation = _finalRevenue * 0.10;
+    const _subAffiliation = _finalRevenue * 0.05;
+    const _marketing = _finalRevenue * 0.10;
+    const _salaries = _finalRevenue * 0.07;
+    const _officeExpenses = _finalRevenue * 0.03;
+    const _pbe = _finalRevenue * 0.02;
+    const _extraordinary = _finalRevenue * 0.01;
+    const _netProfit = _finalRevenue * 0.12;
+
+    // Row 1: 4 cards
+    const financialCardsRow1 = [
+      { label: 'Total Revenue', value: _totalRevenue, color: '#1a237e', bg: '#e8eaf6' },
+      { label: 'Final Revenue (85%)', value: _finalRevenue, color: '#0288d1', bg: '#e1f5fe' },
+      { label: 'Profit (50%)', value: _profit, color: '#388e3c', bg: '#e8f5e9' },
+      { label: 'Profit Margin', value: null, display: `${_profitMargin}%`, color: '#fbc02d', bg: '#fffde7' },
+    ];
+
+    // Row 2: 8 cards
+    const financialCardsRow2 = [
+      { label: 'Affiliation (10%)', value: _affiliation, color: '#7b1fa2', bg: '#f3e5f5' },
+      { label: 'Sub Affiliation (5%)', value: _subAffiliation, color: '#00838f', bg: '#e0f7fa' },
+      { label: 'Marketing (10%)', value: _marketing, color: '#e64a19', bg: '#fbe9e7' },
+      { label: 'Salaries (7%)', value: _salaries, color: '#c2185b', bg: '#fce4ec' },
+      { label: 'Office Expenses (3%)', value: _officeExpenses, color: '#6d4c41', bg: '#efebe9' },
+      { label: 'PBE (2%)', value: _pbe, color: '#1565c0', bg: '#e3f2fd' },
+      { label: 'Extraordinary (1%)', value: _extraordinary, color: '#f57f17', bg: '#fff8e1' },
+      { label: 'Net Profit (12%)', value: _netProfit, color: '#2e7d32', bg: '#c8e6c9' },
     ];
 
     return (
@@ -158,11 +178,34 @@ const AdminDashboard = () => {
             </div>
           </div>
           
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center' }}>
-            {financialCards.map((card, i) => (
-              <div key={i} style={{ 
+          {/* Row 1: 4 cards */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center', marginBottom: 20 }}>
+            {financialCardsRow1.map((card, i) => (
+              <div key={i} style={{
                 flex: '1 1 calc(25% - 20px)',
-                minWidth: 240,
+                minWidth: 200,
+                maxWidth: 'calc(25% - 15px)',
+                background: card.bg,
+                borderRadius: 12,
+                padding: '24px 20px',
+                border: `1px solid ${card.color}20`,
+                textAlign: 'center',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                transition: 'all 0.3s ease'
+              }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: card.color, textTransform: 'uppercase', marginBottom: 10, letterSpacing: 0.8, opacity: 0.8 }}>{card.label}</div>
+                <div style={{ fontSize: 22, fontWeight: 900, color: card.color }}>
+                  {card.display ? card.display : `Rs. ${fmt(card.value)}`}
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Row 2: 8 cards */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center' }}>
+            {financialCardsRow2.map((card, i) => (
+              <div key={i} style={{
+                flex: '1 1 calc(25% - 20px)',
+                minWidth: 200,
                 maxWidth: 'calc(25% - 15px)',
                 background: card.bg,
                 borderRadius: 12,
@@ -179,17 +222,20 @@ const AdminDashboard = () => {
           </div>
           
           <div style={{ marginTop: 24, padding: 16, background: '#fcfcfc', borderRadius: 10, border: '1px dashed #ddd' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#1a237e', marginBottom: 8 }}>Income & Expense Breakdown:</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1a237e', marginBottom: 8 }}>Business Calculations:</div>
             <ul style={{ fontSize: 11, color: '#666', listStyleType: 'disc', paddingLeft: 20, lineHeight: 1.6 }}>
-                <li><b>Total Income (100%)</b></li>
-                {/* <li><b>Base Amount:</b> Revenue excluding tax (Total / 1.18).</li> */}
-                <li><b>Hosting Cost (50%)</b> </li>
-                <li><b>Payment Charges (16%)</b> </li>
-                <li><b>Employee Incentives (8%):</b> Applicable only when an employee achieves ₹1,00,000 cross-sell per month</li>
-                <li><b>Official Expenses (4%):</b> Final profit after all internal expenses (18% of Base).</li>
-                <li><b>Extraordinary Expenses (4%)</b></li>
-                <li><b>Gross Margin(50%)</b></li>
-                <li><b>Net Profit(18%):</b> Net profit will be distributed among partners as per the agreed policy</li>
+                <li><b>Total Revenue:</b> Total amount collected from clients for the selected date range.</li>
+                <li><b>Final Revenue (85%):</b> 85% of Total Revenue — operational base after deductions.</li>
+                <li><b>Profit (50%):</b> 50% of Final Revenue.</li>
+                <li><b>Profit Margin:</b> Fixed at 50%.</li>
+                <li><b>Affiliation (10%):</b> 10% of Final Revenue.</li>
+                <li><b>Sub Affiliation (5%):</b> 5% of Final Revenue.</li>
+                <li><b>Marketing (10%):</b> 10% of Final Revenue.</li>
+                <li><b>Salaries (7%):</b> 7% of Final Revenue.</li>
+                <li><b>Office Expenses (3%):</b> 3% of Final Revenue.</li>
+                <li><b>PBE (2%):</b> 2% of Final Revenue.</li>
+                <li><b>Extraordinary (1%):</b> 1% of Final Revenue.</li>
+                <li><b>Net Profit (12%):</b> 12% of Final Revenue.</li>
             </ul>
           </div>
         </div>
